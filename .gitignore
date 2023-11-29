@@ -1,0 +1,6 @@
+# because the files is too large
+models/
+images/
+static/
+templates/
+venv/
