@@ -75,12 +75,15 @@ def update_testobject():
         cursor.execute('UPDATE TestObjects SET type = ?, serialNr = ?, imagePath = ? WHERE id = ?',
                        (data.get('type'), data.get('serialNr'), data.get('imagePath'), data.get('id')))
 
-        # Check if the SniffingPoint already exists
-        cursor.execute('SELECT id FROM SniffingPoint WHERE testObjectId = ?', (data.get('id'),))
-        db_sniffing_points = [row[0] for row in cursor.fetchall()]
+
         sniffing_points = data.get('sniffingPoints')
         if sniffing_points:
+            # Fetch the SniffingPoints that already exists
+            cursor.execute('SELECT id FROM SniffingPoint WHERE testObjectId = ?', (data.get('id'),))
+            db_sniffing_points = [row[0] for row in cursor.fetchall()]
+
             existing_sniffing_points = []
+
             for point in sniffing_points:
                 if point.get('id') in db_sniffing_points:
                     # Update existing SniffingPoint
@@ -93,7 +96,8 @@ def update_testobject():
                     cursor.execute('INSERT INTO SniffingPoint (name, x, y, testObjectId) VALUES (?, ?, ?, ?)',
                                    (point.get('name'), point.get('x'), point.get('y'), data.get('id')))
                     print("creating", point.get('name'))
-
+                    
+            # delete the remaining sniffinpoints
             for db_point in db_sniffing_points:
                 if db_point not in existing_sniffing_points:
                     print("deleting", db_point)
