@@ -75,7 +75,6 @@ def update_testobject():
         cursor.execute('UPDATE TestObjects SET type = ?, serialNr = ?, imagePath = ? WHERE id = ?',
                        (data.get('type'), data.get('serialNr'), data.get('imagePath'), data.get('id')))
 
-
         sniffing_points = data.get('sniffingPoints')
         if sniffing_points:
             # Fetch the SniffingPoints that already exists
@@ -96,7 +95,7 @@ def update_testobject():
                     cursor.execute('INSERT INTO SniffingPoint (name, x, y, testObjectId) VALUES (?, ?, ?, ?)',
                                    (point.get('name'), point.get('x'), point.get('y'), data.get('id')))
                     print("creating", point.get('name'))
-                    
+
             # delete the remaining sniffinpoints
             for db_point in db_sniffing_points:
                 if db_point not in existing_sniffing_points:
@@ -104,7 +103,7 @@ def update_testobject():
                     cursor.execute('DELETE FROM Sniffingpoint WHERE id = ?', (db_point,))
 
         conn.commit()  # Commit the transaction
-        return jsonify({"message": "TestObject added successfully"}), 201
+        return jsonify({"message": "TestObject updated successfully"}), 201
 
     except Exception as e:
         conn.rollback()  # Rollback in case of error
@@ -156,7 +155,7 @@ def edit_testresult():
                        (data.get('leak'), data.get('reason'), data.get('id')))
 
         conn.commit()  # Commit the transaction
-        return jsonify({"message": "TestObject added successfully"}), 201
+        return jsonify({"message": "Test result edited successfully"}), 201
 
     except Exception as e:
         conn.rollback()  # Rollback in case of error
@@ -281,16 +280,6 @@ def get_testobject_with_sniffingpoints(id):
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
 
-
-#         if point:
-#             # Update existing SniffingPoint
-#             cursor.execute('UPDATE SniffingPoint SET name = ?, x = ?, y = ? WHERE id = ?',
-#                            (point.get('name'), point.get('x'), point.get('y'), point.get('id')))
-#         else:
-#             # Insert new SniffingPoint
-#             cursor.execute('INSERT INTO SniffingPoint (name, x, y, testObjectId) VALUES (?, ?, ?, ?)',
-#                            (point.get('name'), point.get('x'), point.get('y'), data.get('id')))
-#
 
 #
 # class PredictSniffingpoint:
