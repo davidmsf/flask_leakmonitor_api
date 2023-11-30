@@ -48,6 +48,7 @@ def predict_img():
 
 @app.route('/get_all', methods=['GET'])
 def get_all():
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -66,6 +67,7 @@ def get_all():
 
 @app.route('/update_testobject', methods=['PUT'])
 def update_testobject():
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -117,6 +119,7 @@ def update_testobject():
 
 @app.route('/create_testobject', methods=['POST'])
 def create_testobject():
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -146,6 +149,7 @@ def create_testobject():
 
 @app.route('/edit_testresult', methods=['POST'])
 def edit_testresult():
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -166,10 +170,37 @@ def edit_testresult():
         conn.close()
 
 
+@app.route('/edit_testresult_batch', methods=['POST'])
+def edit_testresult_batch():
+    conn = None
+    try:
+        conn = connection()
+        cursor = conn.cursor()
+        data = request.get_json(force=True)
+
+        for test_result in data.get('test_results'):
+            # Update Sniffingpoint
+            cursor.execute('UPDATE SniffingPoint SET leak = ?, reason = ? WHERE id = ?',
+                           (test_result.get('leak'), test_result.get('reason'), test_result.get('id')))
+
+        conn.commit()  # Commit the transaction
+        return jsonify({"message": "Test result edited successfully"}), 201
+
+    except Exception as e:
+        conn.rollback()  # Rollback in case of error
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 @app.route('/delete/<id>', methods=['DELETE'])
 def delete(id):
     if not id:
         return jsonify({"error": "Missing id parameter"}), 400
+
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -189,6 +220,7 @@ def get_testobject(id):
     if not id:
         return jsonify({"error": "Missing id parameter"}), 400
 
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -211,6 +243,7 @@ def get_testobject_with_results(id):
     if not id:
         return jsonify({"error": "Missing id parameter"}), 400
 
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
@@ -247,6 +280,7 @@ def get_testobject_with_sniffingpoints(id):
     if not id:
         return jsonify({"error": "Missing id parameter"}), 400
 
+    conn = None
     try:
         conn = connection()
         cursor = conn.cursor()
