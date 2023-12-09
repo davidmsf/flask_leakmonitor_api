@@ -178,9 +178,9 @@ def edit_testresult_batch():
         cursor = conn.cursor()
         data = request.get_json(force=True)
 
-        for test_result in data.get('test_results'):
+        for test_result in data:
             # Update Sniffingpoint
-            cursor.execute('UPDATE SniffingPoint SET leak = ?, reason = ? WHERE id = ?',
+            cursor.execute('UPDATE SniffingPoint SET leak = True, reason = ? WHERE id = ?',
                            (test_result.get('leak'), test_result.get('reason'), test_result.get('id')))
 
         conn.commit()  # Commit the transaction
