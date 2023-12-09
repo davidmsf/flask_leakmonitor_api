@@ -180,8 +180,8 @@ def edit_testresult_batch():
 
         for test_result in data:
             # Update Sniffingpoint
-            cursor.execute('UPDATE SniffingPoint SET leak = True, reason = ? WHERE id = ?',
-                           (test_result.get('leak'), test_result.get('reason'), test_result.get('id')))
+            cursor.execute('UPDATE SniffingPoint SET leak = 1 WHERE id = ?',
+                           (test_result.get('id')))
 
         conn.commit()  # Commit the transaction
         return jsonify({"message": "Test result edited successfully"}), 201
